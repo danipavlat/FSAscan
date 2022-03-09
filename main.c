@@ -7,8 +7,6 @@
  * 			calls scanner.c to scan input for legitimate tokens
  * 			in the course's given programming language
  *
- * 			input file functions taken directly from P0
- *
  */
 
 #include <stdio.h>
@@ -47,8 +45,26 @@ int main (int argc, char* argv[]) {
 			perror("ERROR");
 			return 1;
 		}
+	} else if(argc == 1) {
+		// get input from user to be scanned
+		char inChar;
+		printf("KEYBOARD INPUT: USE CTRL + D TO STOP WRITING\n");
+		FILE * temp = fopen("temp.txt", "w");
+		inChar = getc(stdin);
+
+		while (inChar != EOF) {
+			fprintf(temp, "%c", inChar);
+			inChar = getc(stdin);
+		}
+		fclose(temp);
+
+		fInput = freopen("temp.txt", "r", stdin);
+		if(fInput == NULL) {
+			perror("ERROR");
+			exit(EXIT_FAILURE);
+		}
 	} else {
-		// given input from stdin (Usage: scanner or scanner < xxx.sp2022)
+		// Usage: scanner or scanner < xxx.sp2022
 		fInput = stdin;
 	}
 

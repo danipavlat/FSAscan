@@ -14,4 +14,4 @@ scanner: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -rf *.o
+	rm -rf *.o temp.txt

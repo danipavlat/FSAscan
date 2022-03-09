@@ -21,5 +21,10 @@ void testScanner() {
 		token = scanner();
 		printf("%s token '%s' on line %d\n", token.tokenType, token.token, lineNum);
 	}
-	printf("\nScanning complete. Now terminating.");
+	// end of file
+	token.tokenType = tokenIDs[fEOF - 200];
+	token.lineNum = lineNum;
+	printf("%s token on line %d\n", token.tokenType, lineNum);
+
+	printf("\nScanning complete. Now terminating.\n");
 };

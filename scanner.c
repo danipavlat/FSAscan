@@ -45,16 +45,20 @@ Token scanner() {
 		// handle comments, whitespace, newlines
 		do {
 			currentChar = filter(currentChar);
-		} while (currentChar == '#' || currentChar == ' '
-				|| currentChar == '\t' || currentChar == '\n');
+		} while (currentChar == '#' || currentChar == '\n');
 
 		// get the column index based on character
 		currentCol = getCol(currentChar, tokenStr);
 		// set state to the next in table
 		currentState = FSA_Table[currentState][currentCol];
-		if (currentState < 200) {
+		if (currentState < 200 && currentChar != ' ') {
 			// add current char to token string (allocating memory first)
 			strncat(tokenStr, &currentChar, 1);
+		} else {
+			if (currentChar != EOF && currentChar != ' ') {
+				// final state, but not EOF
+				fseek(fInput, -1, SEEK_CUR); // move file pointer back one
+			}
 		}
 		// repeats until a final state is reached
 	} while (currentState < 200);
@@ -82,7 +86,7 @@ Token scanner() {
 }
 
 char filter(char currentChar) {
-	// skips over whitespace, comments, newlines
+	// skips over comments
 	char lookAhead = '\0';		// next character
 
 	// handle comments
@@ -107,17 +111,13 @@ char filter(char currentChar) {
 			invalidCharError();
 		}
 
-	} else if (currentChar == ' ' || currentChar == '\t') {
-		// handle whitespace
-		do {
-			lookAhead = fgetc(fInput);
-		} while (lookAhead == ' ' || currentChar == '\t');
 	} else if (currentChar == '\n') {
 		// handle newlines
 		do {
 			lineNum++;
 			lookAhead = fgetc(fInput);
 		} while (lookAhead == '\n');
+		return ' ';
 	}
 
 	if (lookAhead == '\0') {
