@@ -17,10 +17,10 @@
 #include <errno.h>
 #include "scanner.h"
 
-FILE * fInput;	// input file
-int lineNum;	// line counter
-int isEOF;		// EOF flag (initially false)
-int inComment;	// comments flag (initially false)
+FILE * fInput;		// input file
+int lineNum;		// line counter
+int isEOF;			// EOF flag (initially false)
+int inComment;		// comments flag (initially false)
 
 int main (int argc, char* argv[]) {
 	char * inFile;	// input filename

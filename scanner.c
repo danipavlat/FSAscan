@@ -19,24 +19,24 @@
 #include "scanner.h"
 #include "token.h"
 
-int getCol(int currentChar, char * tokenStr);
-int filter(int currentChar);
+int getCol(char currentChar, char * tokenStr);
+char filter(char currentChar);
 
-FILE * fInput;	// input file
-int lineNum;	// line counter
-int isEOF;		// EOF flag (initially false)
-int inComment;	// comments flag (initially false)
+FILE * fInput;		// input file
+int lineNum;		// line counter
+int isEOF;			// EOF flag (initially false)
+int inComment;		// comments flag (initially false)
 
 Token scanner() {
 
-	Token token;			// full token details
-	char * tokenStr = "";	// token string
-	int currentChar = '\0';	// current character
-	int currentState = s1;	// current state
-	int currentCol;			// current column
+	Token token;				// full token details
+	char * tokenStr = "";		// token string
+	char currentChar = '\0';	// current character
+	int currentState = s1;		// current state
+	int currentCol;				// current column
 
-	isEOF = 0;		// EOF flag (initially false)
-	inComment = 0;	// comments flag (initially false)
+	isEOF = 0;			// EOF flag (initially false)
+	inComment = 0;		// comments flag (initially false)
 
 	do {
 		currentChar = fgetc(fInput);
@@ -49,7 +49,8 @@ Token scanner() {
 
 		// get the column index based on character
 		currentCol = getCol(currentChar, tokenStr);
-		// add current char to token string
+		// add current char to token string (allocating memory first)
+		tokenStr = (char*) malloc(sizeof(char) * 8);
 		strncat(tokenStr, &currentChar, 1);	// <------------ TODO: FIX THIS !
 		// set state to the next in table
 		currentState = FSA_Table[currentState][currentCol];
@@ -64,8 +65,8 @@ Token scanner() {
 			invalidStringLengthError();
 		}
 		int i;
-		for (i = 0; i < NUM_TOKENS; i++) {
-			if ( strcmp(tokenStr, keywords[i]) ) {
+		for (i = 0; i < NUM_KEYWORDS; i++) {
+			if ( strcmp(tokenStr, keywords[i]) == 0 ) {
 				// string is a keyword
 				currentState = fKey;
 			}
@@ -79,16 +80,16 @@ Token scanner() {
 	return token;
 }
 
-int filter(int currentChar) {
+char filter(char currentChar) {
 	// skips over whitespace, comments, newlines
-	int lookAhead = '\0';	// next character
+	char lookAhead = '\0';	// next character
 
 	// handle comments
 	if (currentChar == '#') {
 		// check next character for valid comment (##)
 		lookAhead = fgetc(fInput);
 		if (lookAhead == '#') {
-			inComment = 1;	// set comment flag to true
+			inComment = 1;		// set comment flag to true
 			lookAhead = '\0';	// reset lookAhead
 			while (lookAhead != '#') {
 				// move through chars until comment is closed
@@ -118,24 +119,28 @@ int filter(int currentChar) {
 		} while (lookAhead == '\n');
 	}
 
+	if (lookAhead == '\0') {
+		return currentChar;
+	}
 	return lookAhead;
 };
 
-int getCol(int currentChar, char * tokenStr) {
+int getCol(char currentChar, char * tokenStr) {
 	// checks character against FSA table to get current col
 	if (currentChar == EOF) {
 		isEOF = 1;
 		return EOFch;
 	} else if (currentChar == '_') {
 		// only valid char if first in token
-		if ( strcmp(tokenStr, "")) {
+		if ( strcmp(tokenStr, "") == 0 ) {
 			return underscore;
 		}
-	} else if ( isalpha(currentChar) ) {
-		if ( islower(currentChar)) {
+	} else if ( isalpha(currentChar) > 0 ) {
+		if ( islower(currentChar) > 0 ) {
 			return lowercase;
 		}
-	} else if ( isdigit(currentChar) ) {
+		return uppercase;
+	} else if ( isdigit(currentChar) > 0 ) {
 		return digit;
 	} else if (currentChar == '=') {
 		return equals;

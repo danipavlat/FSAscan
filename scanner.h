@@ -14,10 +14,10 @@
 
 #include "token.h"
 
-extern FILE * fInput;	// input file
-extern int lineNum;		// line counter
-extern int isEOF;		// EOF flag (initially false)
-extern int inComment;	// comments flag (initially false)
+extern FILE * fInput;		// input file
+extern int lineNum;			// line counter
+extern int isEOF;			// EOF flag (initially false)
+extern int inComment;		// comments flag (initially false)
 
 Token scanner();
 void testScanner();
