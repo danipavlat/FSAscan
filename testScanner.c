@@ -16,10 +16,10 @@
 void testScanner() {
 	Token token;
 
+	printf("Now starting scanner:\n\n");
 	while (!feof(fInput)) {
 		token = scanner();
-		printf("Now starting scanner:\n\n");
-		printf("%s '%s' on line %d\n", token.tokenType, token.token, lineNum);
-		printf("\nScanning complete. Now terminating.");
+		printf("%s token '%s' on line %d\n", token.tokenType, token.token, lineNum);
 	}
+	printf("\nScanning complete. Now terminating.");
 };

@@ -23,7 +23,7 @@ int getCol(char currentChar, char * tokenStr);
 char filter(char currentChar);
 
 FILE * fInput;		// input file
-int lineNum;		// line counter
+int lineNum = 1;	// line counter
 int isEOF;			// EOF flag (initially false)
 int inComment;		// comments flag (initially false)
 
@@ -38,6 +38,7 @@ Token scanner() {
 	isEOF = 0;			// EOF flag (initially false)
 	inComment = 0;		// comments flag (initially false)
 
+	tokenStr = (char*) malloc(sizeof(char) * 8);
 	do {
 		currentChar = fgetc(fInput);
 
@@ -49,12 +50,12 @@ Token scanner() {
 
 		// get the column index based on character
 		currentCol = getCol(currentChar, tokenStr);
-		// add current char to token string (allocating memory first)
-		tokenStr = (char*) malloc(sizeof(char) * 8);
-		strncat(tokenStr, &currentChar, 1);	// <------------ TODO: FIX THIS !
 		// set state to the next in table
 		currentState = FSA_Table[currentState][currentCol];
-
+		if (currentState < 200) {
+			// add current char to token string (allocating memory first)
+			strncat(tokenStr, &currentChar, 1);
+		}
 		// repeats until a final state is reached
 	} while (currentState < 200);
 
@@ -82,7 +83,7 @@ Token scanner() {
 
 char filter(char currentChar) {
 	// skips over whitespace, comments, newlines
-	char lookAhead = '\0';	// next character
+	char lookAhead = '\0';		// next character
 
 	// handle comments
 	if (currentChar == '#') {
