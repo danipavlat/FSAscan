@@ -13,6 +13,6 @@ in the course's given programming language, returning one valid token
 	make
 
 ## Usage
-	scanner						reads from the keyboard until simulated EOF (CTRL + D)
+	scanner				reads from the keyboard until simulated EOF (CTRL + D)
 	scanner < somefile		same as above but redirecting from somefile instead of keyboard
 	scanner somefile		reads from somefile.sp2020
